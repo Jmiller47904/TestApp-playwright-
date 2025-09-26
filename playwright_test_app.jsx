@@ -21,8 +21,11 @@ playwright-test-app/
 │   │   ├── Form.tsx
 │   │   └── Widgets.tsx
 │   └── index.css
-└── tests/
-    └── example.spec.ts
+├── tests/
+│   └── example.spec.ts
+└── .github/
+    └── workflows/
+        └── playwright.yml
 ```
 
 ---
@@ -37,7 +40,7 @@ playwright-test-app/
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "playwright test"
+    "test": "playwright test --reporter=html"
   },
   "dependencies": {
     "react": "^18.3.1",
@@ -337,6 +340,7 @@ export default defineConfig({
     baseURL: 'http://localhost:5173',
     headless: true,
   },
+  reporter: [['list'], ['html', { open: 'never' }]],
 })
 ```
 
@@ -363,3 +367,43 @@ test('form submission', async ({ page }) => {
 ```
 
 ---
+
+### `.github/workflows/playwright.yml`
+```yaml
+name: Playwright Tests
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+      - name: Run Playwright tests
+        run: npm run test
+
+      - name: Upload Playwright HTML Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report
+          retention-days: 7
+```
