@@ -1,0 +1,3 @@
+import { test, expect } from '@playwright/test'
+test('counter updates in both directions', async ({ page }) => { await page.goto('/'); const count = page.getByLabel('Current count'); await expect(count).toHaveText('0'); await page.getByRole('button', { name: 'Increase' }).click(); await expect(count).toHaveText('1'); await page.getByRole('button', { name: 'Decrease' }).click(); await expect(count).toHaveText('0') })
+test('adds a trimmed scenario', async ({ page }) => { await page.goto('/'); await page.getByLabel('Scenario').fill('  Verify Entra sign-in  '); await page.getByRole('button', { name: 'Add' }).click(); await expect(page.getByRole('listitem')).toHaveText('Verify Entra sign-in'); await expect(page.getByLabel('Scenario')).toHaveValue('') })
